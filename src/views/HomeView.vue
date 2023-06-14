@@ -52,17 +52,35 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
-    <h1>Todo App</h1>
-    <form @submit.prevent="createTodo">
-      <input placeholder="Todo title" type="text" v-model="title" />
-      <button type="submit">Create</button>
+  <div class="container mt-2">
+    <h1 class="fw-light">Todo App</h1>
+    <form class="row" @submit.prevent="createTodo">
+      <div class="col-4">
+        <input class="form-control" placeholder="Todo title" type="text" v-model="title" />
+      </div>
+      <div class="col-3"><button class="btn btn-primary" type="submit">Create</button></div>
     </form>
-    <ul>
-      <li v-for="todo in todos" :key="todo.id">
-        <input type="checkbox" v-model="todo.completed" @click="completeTodo(todo)" />
-        <span :class="{ completed: todo.completed }">{{ todo.title }}</span>
-        <button @click="deleteTodo(todo)">Delete</button>
+    <ul class="list-group mt-4">
+      <li
+        class="list-group-item d-flex justify-content-between align-items-center"
+        v-for="todo in todos"
+        :key="todo.id"
+      >
+        <div>
+          <input
+            class="form-check-input"
+            type="checkbox"
+            v-model="todo.completed"
+            @click="completeTodo(todo)"
+          />
+          <span class="m-2"
+            ><span :class="{ completed: todo.completed }">{{ todo.title }}</span></span
+          >
+        </div>
+
+        <button class="btn btn-danger" @click="deleteTodo(todo)">
+          <i class="bi bi-trash3-fill"></i>
+        </button>
       </li>
     </ul>
   </div>
