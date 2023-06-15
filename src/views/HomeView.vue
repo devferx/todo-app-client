@@ -1,27 +1,35 @@
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+
+import todoApi from '../api/todoApi'
+
+const router = useRouter()
 
 const todos = reactive([])
 const title = ref('')
 const editTodoId = ref(null)
 
 const fetchTodos = async () => {
-  const res = await fetch('http://localhost:3005/api/todos')
-  const data = await res.json()
-  todos.push(...data)
+  try {
+    const { data } = await todoApi.get('/todos')
+    todos.push(...data)
+  } catch (err) {
+    // if unauthorized, redirect to login
+    if (err.response.status === 401) {
+      router.push({ name: 'login' })
+    }
+  }
 }
 
 const mutateTodo = async () => {
   if (!title.value) return
 
   if (editTodoId.value) {
-    const res = await fetch(`http://localhost:3005/api/todos/${editTodoId.value}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: title.value })
+    const { data: updatedTodo } = await todoApi.put(`/todos/${editTodoId.value}`, {
+      title: title.value
     })
 
-    const updatedTodo = await res.json()
     const index = todos.findIndex((t) => t.id === updatedTodo.id)
     todos[index] = updatedTodo
     title.value = ''
@@ -29,25 +37,20 @@ const mutateTodo = async () => {
     return
   }
 
-  const res = await fetch('http://localhost:3005/api/todos', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title: title.value })
+  const res = await todoApi.post('/todos', {
+    title: title.value
   })
 
-  const todo = await res.json()
+  const todo = res.data
   todos.push(todo)
   title.value = ''
 }
 
 const completeTodo = async (todo) => {
-  const res = await fetch(`http://localhost:3005/api/todos/${todo.id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ completed: !todo.completed })
+  const { data: updatedTodo } = await todoApi.put(`/todos/${todo.id}`, {
+    completed: !todo.completed
   })
 
-  const updatedTodo = await res.json()
   const index = todos.findIndex((t) => t.id === updatedTodo.id)
   todos[index] = updatedTodo
 }
@@ -63,11 +66,9 @@ const cancelEdit = () => {
 }
 
 const deleteTodo = async (todo) => {
-  const res = await fetch(`http://localhost:3005/api/todos/${todo.id}`, {
-    method: 'DELETE'
-  })
+  const resp = await todoApi.delete(`/todos/${todo.id}`)
 
-  if (res.ok) {
+  if (resp.status === 200) {
     todos.splice(todos.indexOf(todo), 1)
   }
 }
