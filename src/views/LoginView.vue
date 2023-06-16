@@ -10,6 +10,7 @@ const tokenStore = useTokenStore()
 
 const email = ref('admin@gmail.com')
 const password = ref('')
+const showAlert = ref(false)
 
 const onSubmit = async (ev) => {
   ev.preventDefault()
@@ -25,24 +26,42 @@ const onSubmit = async (ev) => {
     })
     .catch((err) => {
       console.log(err)
+      showAlert.value = true
     })
 }
 </script>
 <template>
   <form class="container" @submit="onSubmit">
-    <h3 class="">Login</h3>
-    <input class="form-control" placeholder="Email" type="text" v-model="email" autofocus />
-    <input class="form-control" placeholder="Password" type="text" v-model="password" />
-    <button class="btn btn-primary btn-large">Login</button>
+    <div class="d-grid gap-2">
+      <h2 class="mt-4 text-center">Login</h2>
+      <img width="300" src="../assets/login.svg" alt="Login" />
+      <input
+        class="form-control"
+        placeholder="Email"
+        type="email"
+        required
+        v-model="email"
+        autofocus
+      />
+      <input
+        class="form-control"
+        placeholder="Password"
+        type="password"
+        required
+        v-model="password"
+      />
+      <!-- label alert -->
+
+      <button class="btn btn-primary btn-lg">Login</button>
+      <div class="alert alert-danger" role="alert" v-if="showAlert">
+        Email or password is incorrect
+      </div>
+    </div>
   </form>
 </template>
 
 <style scoped>
 .container {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;
   max-width: 330px;
 }
 </style>
