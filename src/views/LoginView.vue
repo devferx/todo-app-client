@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
-import http from 'axios'
+import todoApi from '../api/todoApi.js'
 
 import { useTokenStore } from '../stores/token'
 
@@ -14,20 +14,18 @@ const showAlert = ref(false)
 
 const onSubmit = async (ev) => {
   ev.preventDefault()
-  http
-    .post('http://localhost:3005/api/auth/login', {
+  try {
+    const { data } = await todoApi.post('/auth/login', {
       email: email.value,
       password: password.value
     })
-    .then((res) => {
-      const token = res.data.access_token
-      tokenStore.login(token)
-      router.push({ name: 'home' })
-    })
-    .catch((err) => {
-      console.log(err)
-      showAlert.value = true
-    })
+    const token = data.access_token
+    tokenStore.login(token)
+    router.push({ name: 'home' })
+  } catch (err) {
+    console.log(err)
+    showAlert.value = true
+  }
 }
 </script>
 <template>
