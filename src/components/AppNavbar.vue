@@ -1,10 +1,12 @@
 <script setup>
 import { useRouter } from 'vue-router'
-import { isLogged } from '../utils/jwt'
+import { useTokenStore } from '../stores/token'
+
 const router = useRouter()
+const tokenStore = useTokenStore()
 
 const logout = () => {
-  localStorage.removeItem('token')
+  tokenStore.logout()
   router.push({ name: 'login' })
 }
 </script>
@@ -16,7 +18,7 @@ const logout = () => {
   >
     <div class="container-fluid d-flex align-items">
       <a class="navbar-brand" href="#">Todo App</a>
-      <button class="btn btn-outline-danger" v-if="isLogged()" @click="logout">Logout</button>
+      <button class="btn btn-outline-danger" v-if="tokenStore.token" @click="logout">Logout</button>
     </div>
   </nav>
 </template>

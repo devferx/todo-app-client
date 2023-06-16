@@ -3,7 +3,10 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import http from 'axios'
 
+import { useTokenStore } from '../stores/token'
+
 const router = useRouter()
+const tokenStore = useTokenStore()
 
 const email = ref('admin@gmail.com')
 const password = ref('')
@@ -17,7 +20,7 @@ const onSubmit = async (ev) => {
     })
     .then((res) => {
       const token = res.data.access_token
-      localStorage.setItem('token', token)
+      tokenStore.login(token)
       router.push({ name: 'home' })
     })
     .catch((err) => {
