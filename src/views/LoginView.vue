@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, RouterLink } from 'vue-router'
 import http from 'axios'
 
 import { useTokenStore } from '../stores/token'
@@ -50,12 +50,11 @@ const onSubmit = async (ev) => {
         required
         v-model="password"
       />
-      <!-- label alert -->
-
       <button class="btn btn-primary btn-lg">Login</button>
       <div class="alert alert-danger" role="alert" v-if="showAlert">
         Email or password is incorrect
       </div>
+      <RouterLink to="/register"> You don't have an account? Register here </RouterLink>
     </div>
   </form>
 </template>
